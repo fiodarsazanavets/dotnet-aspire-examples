@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/AspireWithSso/AspireApp/OpenIdConnectProvider/identityprovider.sqlite3
+/AspireWithSso/AspireApp/OpenIdConnectProvider/identityprovider.sqlite3-shm
+/AspireWithSso/AspireApp/OpenIdConnectProvider/identityprovider.sqlite3-wal

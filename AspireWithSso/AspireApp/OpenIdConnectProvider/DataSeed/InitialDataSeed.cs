@@ -21,6 +21,7 @@ public class InitialDataSeed(IServiceProvider serviceProvider) : IHostedService
             await manager.CreateAsync(new OpenIddictApplicationDescriptor
             {
                 ClientId = "aspNetCoreAuth",
+                ClientSecret = "some_secret",
                 ConsentType = ConsentTypes.Explicit,
                 DisplayName = "Blazor WebAssembly client application",
                 RedirectUris =

@@ -28,7 +28,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlite($"Filename={Path.Combine(Path.GetTempPath(), "identityprovider.sqlite3")}");
+    options.UseSqlite($"Filename=identityprovider.sqlite3");
     options.UseOpenIddict();
 });
 
@@ -47,6 +47,7 @@ builder.Services.AddOpenIddict()
     })
     .AddServer(serverBuilder =>
     {
+        serverBuilder.DisableAccessTokenEncryption();
         serverBuilder.SetAuthorizationEndpointUris("connect/authorize")
             .SetLogoutEndpointUris("connect/logout")
             .SetTokenEndpointUris("connect/token")

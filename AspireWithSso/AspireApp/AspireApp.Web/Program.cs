@@ -22,6 +22,8 @@ builder.Services.AddHttpClient<WeatherApiClient>(client =>
         client.BaseAddress = new("https+http://apiservice");
     });
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

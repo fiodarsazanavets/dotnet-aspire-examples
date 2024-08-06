@@ -32,10 +32,12 @@ var idpAppHttps = identityProvider.GetEndpoint("https");
 if (idpAppHttps.Exists)
 {
     webFrontend.WithEnvironment(IDP_HTTP_ENVIRONMENT_VARIABLE, () => $"{idpAppHttps.Scheme}://{idpAppHttps.Host}:{idpAppHttps.Port}");
+    apiService.WithEnvironment(IDP_HTTP_ENVIRONMENT_VARIABLE, () => $"{idpAppHttps.Scheme}://{idpAppHttps.Host}:{idpAppHttps.Port}");
 }
 else
 {
     webFrontend.WithEnvironment(IDP_HTTP_ENVIRONMENT_VARIABLE, () => $"{idpAppHttp.Scheme}://{idpAppHttp.Host}:{idpAppHttp.Port}");
+    apiService.WithEnvironment(IDP_HTTP_ENVIRONMENT_VARIABLE, () => $"{idpAppHttp.Scheme}://{idpAppHttp.Host}:{idpAppHttp.Port}");
 }
 
 builder.Build().Run();
