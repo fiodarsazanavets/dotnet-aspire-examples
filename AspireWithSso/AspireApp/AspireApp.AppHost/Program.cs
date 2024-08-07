@@ -6,13 +6,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 var identityProvider = builder.AddProject<Projects.OpenIdConnectProvider>("identityprovider")
     .WithExternalHttpEndpoints();
 
-var apiService = builder.AddProject<Projects.AspireApp_ApiService>("apiservice")
-	.WithReference(identityProvider);
+var apiService = builder.AddProject<Projects.AspireApp_ApiService>("apiservice");
 
 var webFrontend = builder.AddProject<Projects.AspireApp_Web>("webfrontend")
 	.WithExternalHttpEndpoints()
-	.WithReference(apiService)
-    .WithReference(identityProvider);
+	.WithReference(apiService);
 
 var webAppHttp = webFrontend.GetEndpoint("http");
 var webAppHttps = webFrontend.GetEndpoint("https");
