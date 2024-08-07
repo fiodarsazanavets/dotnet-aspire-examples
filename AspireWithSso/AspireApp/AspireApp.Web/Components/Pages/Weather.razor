@@ -1,6 +1,7 @@
 ﻿@page "/weather"
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
+@attribute [Authorize]
 
 @inject WeatherApiClient WeatherApi
 
