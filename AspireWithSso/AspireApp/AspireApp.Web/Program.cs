@@ -34,7 +34,6 @@ builder.Services.AddAuthentication(options =>
 {
     options.SignInScheme = "Cookies";
     options.Authority = Environment.GetEnvironmentVariable(Constants.IDP_HTTP_ENVIRONMENT_VARIABLE);
-    options.RequireHttpsMetadata = true;
     options.ClientId = "aspNetCoreAuth";
     options.ClientSecret = "some_secret";
     options.ResponseType = "code";
