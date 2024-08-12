@@ -1,6 +1,7 @@
 using AspireApp.ServiceDefaults;
 using AspireApp.Web;
 using AspireApp.Web.Components;
+using AspireApp.Web.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
@@ -24,26 +25,16 @@ builder.Services.AddHttpClient<WeatherApiClient>(client =>
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddHttpClient(Constants.OidcBackchannel, o => o.BaseAddress = new("http://idp"));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-{
-    options.SignInScheme = "Cookies";
-    options.Authority = Environment.GetEnvironmentVariable(Constants.IDP_HTTP_ENVIRONMENT_VARIABLE);
-    options.ClientId = "aspNetCoreAuth";
-    options.ClientSecret = "some_secret";
-    options.ResponseType = "code";
-    options.UsePkce = true;
-    options.SaveTokens = true;
-    options.CallbackPath = "/signin-oidc";
-    options.SignedOutCallbackPath = "/signout-callback-oidc";
-    options.RequireHttpsMetadata = false;
-    options.GetClaimsFromUserInfoEndpoint = true;
-});
+.AddOpenIdConnect()
+.ConfigureWebAppOpenIdConnect();
 
 var app = builder.Build();
 

@@ -17,7 +17,7 @@ builder.Services.AddAuthentication(options =>
 
 }).AddJwtBearer(options =>
 {
-    options.Authority = Environment.GetEnvironmentVariable(Constants.IDP_HTTP_ENVIRONMENT_VARIABLE);
+    options.Authority = Environment.GetEnvironmentVariable("IDP_HTTP_ENVIRONMENT_VARIABLE");
     options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
