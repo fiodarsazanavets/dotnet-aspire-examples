@@ -14,8 +14,8 @@ var apiService = builder.AddProject<Projects.AspireApp_ApiService>("apiservice")
     .WithReference(idp);
 
 var webFrontend = builder.AddProject<Projects.AspireApp_Web>("webfrontend")
-	.WithExternalHttpEndpoints()
-	.WithReference(apiService)
+    .WithExternalHttpEndpoints()
+    .WithReference(apiService)
     .WithReference(idp, env: "Identity__ClientSecret");
 
 var webAppHttp = webFrontend.GetEndpoint("http");

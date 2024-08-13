@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.Extensions.ServiceDiscovery;
 
 namespace AspireApp.Web.Extensions;
 
@@ -38,12 +37,5 @@ public static class AuthExtensions
         var idpBaseUri = httpClient.BaseAddress
             ?? throw new InvalidOperationException($"HttpClient instance does not have a BaseAddress configured.");
         return new Uri(idpBaseUri, "realms/WeatherApp/");
-    }
-
-    public static Uri ResolveIdpAuthorityUri(this ServiceEndpointResolver resolver, string serviceName = "http://idp")
-    {
-        var idpBaseUrl = resolver.ResolveEndPointUrlAsync(serviceName).AsTask().GetAwaiter().GetResult()
-            ?? throw new InvalidOperationException($"Could not resolve IdP address using service name '{serviceName}'.");
-        return new Uri(new Uri(idpBaseUrl), "realms/weatherapp/");
     }
 }
