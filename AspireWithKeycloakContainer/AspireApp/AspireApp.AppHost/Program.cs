@@ -3,7 +3,6 @@ using AspireApp.AppHost.Extensions;
 const string WEBAPP_HTTP_CONTAINERHOST_ENV_VARIABLE = "WEBAPP_HTTP_CONTAINERHOST";
 const string WEBAPP_HTTP_ENV_VARIABLE = "WEBAPP_HTTP";
 const string WEBAPP_HTTPS_ENV_VARIABLE = "WEBAPP_HTTPS";
-const string IDP_HTTP_ENVIRONMENT_VARIABLE = "IDP_HTTP";
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -12,7 +11,7 @@ var idp = builder.AddKeycloakContainer("idp", tag: "23.0")
     .WithExternalHttpEndpoints();
 
 var apiService = builder.AddProject<Projects.AspireApp_ApiService>("apiservice")
-    .WithReference(idp, env: "Identity__ClientSecret");
+    .WithReference(idp);
 
 var webFrontend = builder.AddProject<Projects.AspireApp_Web>("webfrontend")
 	.WithExternalHttpEndpoints()

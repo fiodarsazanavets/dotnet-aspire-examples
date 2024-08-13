@@ -1,35 +1,36 @@
 ﻿using AspireApp.ServiceDefaults;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.Extensions.ServiceDiscovery;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
-namespace AspireApp.Web.Extensions;
+namespace AspireApp.ApiService.Extensions;
 
 public static class AuthExtensions
 {
-    public static void ConfigureWebAppOpenIdConnect(this AuthenticationBuilder authentication)
+    public static void ConfigureApiJwt(this AuthenticationBuilder authentication)
     {
         // Named options
-        authentication.Services.AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
+        authentication.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
             .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(configure);
 
         // Unnamed options
-        authentication.Services.AddOptions<OpenIdConnectOptions>()
+        authentication.Services.AddOptions<JwtBearerOptions>()
             .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(configure);
 
-        static void configure(OpenIdConnectOptions options, IConfiguration configuration, IHttpClientFactory httpClientFactory, IHostEnvironment hostEnvironment)
+        static void configure(JwtBearerOptions options, IConfiguration configuration, IHttpClientFactory httpClientFactory, IHostEnvironment hostEnvironment)
         {
             var backchannelHttpClient = httpClientFactory.CreateClient(Constants.OidcBackchannel);
 
             options.Backchannel = backchannelHttpClient;
             options.Authority = backchannelHttpClient.GetIdpAuthorityUri().ToString();
-            options.ClientId = "webapp";
-            options.ClientSecret = Environment.GetEnvironmentVariable("Identity__ClientSecret");
-            options.ResponseType = OpenIdConnectResponseType.Code;
-            options.SaveTokens = true;
             options.RequireHttpsMetadata = !hostEnvironment.IsDevelopment();
             options.MapInboundClaims = false;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false
+            };
         }
     }
 

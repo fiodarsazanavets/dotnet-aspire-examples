@@ -1,6 +1,6 @@
+using AspireApp.ApiService.Extensions;
 using AspireApp.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,20 +10,16 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
+builder.Services.AddHttpClient(Constants.OidcBackchannel, o => o.BaseAddress = new("http://idp"));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-}).AddJwtBearer(options =>
-{
-    options.Authority = Environment.GetEnvironmentVariable("IDP_HTTP_ENVIRONMENT_VARIABLE");
-    options.RequireHttpsMetadata = false;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateAudience = false
-    };
-});
+})
+.AddJwtBearer()
+.ConfigureApiJwt();
 
 builder.Services.AddAuthorization();
 
