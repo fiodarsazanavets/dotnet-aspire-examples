@@ -11,13 +11,13 @@ public static class AuthExtensions
     {
         // Named options
         authentication.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(configure);
+            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(Configure);
 
         // Unnamed options
         authentication.Services.AddOptions<JwtBearerOptions>()
-            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(configure);
+            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(Configure);
 
-        static void configure(JwtBearerOptions options, IConfiguration configuration, IHttpClientFactory httpClientFactory, IHostEnvironment hostEnvironment)
+        static void Configure(JwtBearerOptions options, IConfiguration configuration, IHttpClientFactory httpClientFactory, IHostEnvironment hostEnvironment)
         {
             var backchannelHttpClient = httpClientFactory.CreateClient(Constants.OidcBackchannel);
 
@@ -30,12 +30,5 @@ public static class AuthExtensions
                 ValidateAudience = false
             };
         }
-    }
-
-    public static Uri GetIdpAuthorityUri(this HttpClient httpClient)
-    {
-        var idpBaseUri = httpClient.BaseAddress
-            ?? throw new InvalidOperationException($"HttpClient instance does not have a BaseAddress configured.");
-        return new Uri(idpBaseUri, "realms/WeatherApp/");
     }
 }

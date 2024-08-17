@@ -109,4 +109,11 @@ public static class Extensions
 
         return app;
     }
+
+    public static Uri GetIdpAuthorityUri(this HttpClient httpClient)
+    {
+        var idpBaseUri = httpClient.BaseAddress
+            ?? throw new InvalidOperationException($"HttpClient instance does not have a BaseAddress configured.");
+        return new Uri(idpBaseUri, "realms/WeatherApp/");
+    }
 }

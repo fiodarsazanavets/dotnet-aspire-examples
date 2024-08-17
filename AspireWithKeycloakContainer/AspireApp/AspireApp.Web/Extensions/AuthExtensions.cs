@@ -11,13 +11,13 @@ public static class AuthExtensions
     {
         // Named options
         authentication.Services.AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
-            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(configure);
+            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(Configure);
 
         // Unnamed options
         authentication.Services.AddOptions<OpenIdConnectOptions>()
-            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(configure);
+            .Configure<IConfiguration, IHttpClientFactory, IHostEnvironment>(Configure);
 
-        static void configure(OpenIdConnectOptions options, IConfiguration configuration, IHttpClientFactory httpClientFactory, IHostEnvironment hostEnvironment)
+        static void Configure(OpenIdConnectOptions options, IConfiguration configuration, IHttpClientFactory httpClientFactory, IHostEnvironment hostEnvironment)
         {
             var backchannelHttpClient = httpClientFactory.CreateClient(Constants.OidcBackchannel);
 
@@ -30,12 +30,5 @@ public static class AuthExtensions
             options.RequireHttpsMetadata = !hostEnvironment.IsDevelopment();
             options.MapInboundClaims = false;
         }
-    }
-
-    public static Uri GetIdpAuthorityUri(this HttpClient httpClient)
-    {
-        var idpBaseUri = httpClient.BaseAddress
-            ?? throw new InvalidOperationException($"HttpClient instance does not have a BaseAddress configured.");
-        return new Uri(idpBaseUri, "realms/WeatherApp/");
     }
 }
