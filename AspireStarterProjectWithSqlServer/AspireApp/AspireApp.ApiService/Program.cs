@@ -23,8 +23,18 @@ using (var scope = app.Services.CreateScope())
     var connection = scope.ServiceProvider.GetRequiredService<SqlConnection>();
     connection.Open();
 
+    // Ensure the database exists
+    var createDbCommand = new SqlCommand(@"
+            IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'YourDatabaseName')
+            BEGIN
+                  CREATE DATABASE WeatherDB;
+            END;", connection);
+
+    createDbCommand.ExecuteNonQuery();
+
     // Ensure the table exists
     var createTableCommand = new SqlCommand(@"
+            USE WeatherDB;
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='WeatherForecasts' and xtype='U')
             CREATE TABLE WeatherForecasts (
                 Id INT PRIMARY KEY IDENTITY,
@@ -64,7 +74,9 @@ app.MapGet("/weatherforecast", ([FromServices] SqlConnection connection) =>
 {
     connection.Open();
 
-    var command = new SqlCommand("SELECT Date, TemperatureC, Summary FROM WeatherForecasts", connection);
+    var command = new SqlCommand(@"
+    USE WeatherDB;
+    SELECT Date, TemperatureC, Summary FROM WeatherForecasts", connection);
     var weatherForecasts = new List<WeatherForecast>();
 
     using (var reader = command.ExecuteReader())
