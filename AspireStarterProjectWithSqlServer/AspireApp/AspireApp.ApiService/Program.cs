@@ -25,7 +25,7 @@ using (var scope = app.Services.CreateScope())
 
     // Ensure the database exists
     var createDbCommand = new SqlCommand(@"
-            IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'YourDatabaseName')
+            IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'WeatherDB')
             BEGIN
                   CREATE DATABASE WeatherDB;
             END;", connection);
