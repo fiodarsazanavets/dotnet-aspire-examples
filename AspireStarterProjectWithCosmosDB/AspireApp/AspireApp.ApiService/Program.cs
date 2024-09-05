@@ -8,22 +8,7 @@ builder.AddServiceDefaults();
 
 builder.Services.AddProblemDetails();
 
-builder.AddAzureCosmosClient("cosmos",
-    configureClientOptions: options =>
-    {
-        options.HttpClientFactory = () =>
-        {
-            var httpClientHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-            return new HttpClient(httpClientHandler);
-        };
-    
-        options.ConnectionMode = ConnectionMode.Gateway;
-        options.LimitToEndpoint = true;
-        options.ServerCertificateCustomValidationCallback = delegate { return true; };
-    });
+builder.AddAzureCosmosClient("cosmos");
 
 var app = builder.Build();
 
