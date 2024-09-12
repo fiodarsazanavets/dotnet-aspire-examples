@@ -4,7 +4,7 @@ namespace AspireApp.ApiService.Models;
 
 public class WeatherForecast
 {
-    public string Id { get; set; }
+    public string id { get; set; }
 
     public DateOnly Date { get; set; }
 
