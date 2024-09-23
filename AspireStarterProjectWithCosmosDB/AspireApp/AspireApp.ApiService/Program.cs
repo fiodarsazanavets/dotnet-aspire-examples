@@ -27,8 +27,6 @@ app.MapGet("/weatherforecast", async ([FromServices] CosmosClient cosmosClient) 
         var database = cosmosClient.GetDatabase("weather");
         var container = database.GetContainer("forecasts");
 
-
-
         var query = new QueryDefinition("SELECT * FROM c");
         var iterator = container.GetItemQueryIterator<WeatherForecast>(query);
 
