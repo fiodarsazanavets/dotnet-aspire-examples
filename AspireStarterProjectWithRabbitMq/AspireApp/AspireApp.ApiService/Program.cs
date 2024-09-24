@@ -3,6 +3,8 @@ using System.Text;
 using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
+await Task.Delay(10000);
+
 builder.AddRabbitMQClient("rabbitmq");
 
 builder.AddServiceDefaults();
