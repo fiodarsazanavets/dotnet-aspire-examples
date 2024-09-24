@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace AspireApp.Web;
 
-public class WeatherApiClient(HttpClient httpClient, QueueServiceClient queueServiceClient) : BackgroundService
+public class WeatherApiClient(QueueServiceClient queueServiceClient) : BackgroundService
 {
     private readonly List<WeatherForecast> forecasts = new List<WeatherForecast>();
 
