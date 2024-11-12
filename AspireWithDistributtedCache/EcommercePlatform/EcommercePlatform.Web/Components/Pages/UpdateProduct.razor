@@ -1,0 +1,114 @@
+﻿@page "/update-product/{ProductId:int}"
+@rendermode InteractiveServer
+
+@using System.Net.Http.Json
+@using EcommercePlatform.ServiceDefaults.Dtos
+
+@inject ProductsApiClient ProductsApi
+@inject NavigationManager Navigation
+
+<h3>Update Product</h3>
+
+@if (IsLoading)
+{
+    <p>Loading product details...</p>
+}
+else if (ErrorMessage != null)
+{
+    <p style="color:red">@ErrorMessage</p>
+}
+else
+{
+    <div class="card shadow-sm p-4 mb-4 bg-white rounded">
+        <div class="card-body">
+            <form>
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Product Name</label>
+                    <input type="text" id="productName" class="form-control" @bind="ProductName" placeholder="Enter product name" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="productPrice" class="form-label">Price</label>
+                    <input type="number" id="productPrice" class="form-control" @bind="ProductPrice" step="0.01" placeholder="Enter price" />
+                </div>
+
+                <button type="button" class="btn btn-primary" @onclick="UpdateDetails">Update Product</button>
+            </form>
+        </div>
+    </div>
+
+    @if (UpdateMessage != null)
+    {
+        <div class="alert alert-success mt-3" role="alert">
+            @UpdateMessage
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+
+    private string ProductName { get; set; }
+    private decimal ProductPrice { get; set; }
+    private string UpdateMessage { get; set; }
+    private string ErrorMessage { get; set; }
+    private bool IsLoading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProduct();
+    }
+
+    private async Task LoadProduct()
+    {
+        try
+        {
+            var product = await ProductsApi.GetProductAsync(ProductId);
+
+            if (product is not null)
+            {
+                ProductName = product.Name;
+                ProductPrice = product.Price;
+            }
+            else
+            {
+                ErrorMessage = "Product not found.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error loading product: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task UpdateDetails()
+    {
+        if (string.IsNullOrWhiteSpace(ProductName) || ProductPrice <= 0)
+        {
+            UpdateMessage = "Please enter valid product details.";
+            return;
+        }
+
+        var updatedProduct = new Product(ProductId, ProductName, ProductPrice);
+
+        var response = await ProductsApi.UpdateProduct(ProductId, updatedProduct);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Locked)
+        {
+            UpdateMessage = "Resource is locked by another process.";
+        }
+        else
+        {
+            UpdateMessage = $"Error updating product: {response.ReasonPhrase}";
+        }
+    }
+}

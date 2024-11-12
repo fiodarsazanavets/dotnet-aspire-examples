@@ -25,31 +25,29 @@ using (var scope = app.Services.CreateScope())
     var connection = scope.ServiceProvider.GetRequiredService<IConnection>();
 
     using IModel channel = connection.CreateModel();
+    // Declare a queue (if the queue doesn't exist, it will be created)
+    channel.QueueDeclare(queue: "weather",
+                         durable: false,
+                         exclusive: false,
+                         autoDelete: false,
+                         arguments: null);
+
+    for (int i = 1; i < 6; i++)
     {
-        // Declare a queue (if the queue doesn't exist, it will be created)
-        channel.QueueDeclare(queue: "weather",
-                             durable: false,
-                             exclusive: false,
-                             autoDelete: false,
-                             arguments: null);
+        var message = new WeatherForecast
+        (
+            DateOnly.FromDateTime(DateTime.Now.AddDays(i)),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        );
 
-        for (int i = 1; i < 6; i++)
-        {
-            var message = new WeatherForecast
-            (
-                DateOnly.FromDateTime(DateTime.Now.AddDays(i)),
-                Random.Shared.Next(-20, 55),
-                summaries[Random.Shared.Next(summaries.Length)]
-            );
+        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
-            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
-
-            // Publish the message to the queue
-            channel.BasicPublish(exchange: "",
-                                 routingKey: "weather",
-                                 basicProperties: null,
-                                 body: body);
-        }
+        // Publish the message to the queue
+        channel.BasicPublish(exchange: "",
+                             routingKey: "weather",
+                             basicProperties: null,
+                             body: body);
     }
 }
 

@@ -15,30 +15,30 @@ public class WeatherApiClient(IConnection connection) : BackgroundService
         
         // Declare the queue (must match the publisher's queue)
         channel.QueueDeclare(queue: "weather",
-                             durable: false,
-                             exclusive: false,
-                             autoDelete: false,
-                             arguments: null);
+            durable: false,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
 
-            Console.WriteLine(" [*] Waiting for messages.");
+        Console.WriteLine(" [*] Waiting for messages.");
 
-            // Create a consumer
-            var consumer = new EventingBasicConsumer(channel);
+        // Create a consumer
+        var consumer = new EventingBasicConsumer(channel);
 
-            // Set up a callback to handle received messages
-            consumer.Received += (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($" [x] Received {message}");
+        // Set up a callback to handle received messages
+        consumer.Received += (model, ea) =>
+        {
+            var body = ea.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            Console.WriteLine($" [x] Received {message}");
 
-                forecasts.Add(JsonSerializer.Deserialize<WeatherForecast>(message));
-            };
+            forecasts.Add(JsonSerializer.Deserialize<WeatherForecast>(message));
+        };
 
-            // Start consuming messages from the queue
-            channel.BasicConsume(queue: "weather",
-                                 autoAck: true,
-                                 consumer: consumer);
+        // Start consuming messages from the queue
+        channel.BasicConsume(queue: "weather",
+            autoAck: true,
+            consumer: consumer);
     }
 
     public async Task<WeatherForecast[]> GetWeatherAsync(int maxItems = 10, CancellationToken cancellationToken = default)

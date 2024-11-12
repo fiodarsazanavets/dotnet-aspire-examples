@@ -1,0 +1,50 @@
+﻿@page "/"
+@using EcommercePlatform.ServiceDefaults.Dtos
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+
+@inject ProductsApiClient ProductsApi
+
+<PageTitle>Products</PageTitle>
+
+<h1>Products</h1>
+
+<p>Here is the full list of products available.</p>
+
+@if (products == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Price ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Id</td>
+                    <td>
+                        <a href="/update-product/@product.Id">@product.Name</a>
+                    </td>
+                    <td>@product.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Product[]? products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await ProductsApi.GetProductsAsync();
+    }
+}
