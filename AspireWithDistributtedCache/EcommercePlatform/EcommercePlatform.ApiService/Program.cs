@@ -59,7 +59,7 @@ app.MapGet("/api/products/{productId}", async (int productId, IDistributedCache 
 async Task<Product> GetProductFromDatabaseAsync(int productId)
 {
     // Simulate database access
-    await Task.Delay(100); // Simulated delay
+    await Task.Delay(2000); // Simulated delay
     return products.Single(p => p.Id == productId);
 }
 
@@ -100,11 +100,13 @@ app.MapPut("/api/products/{productId}", async (int productId, Product updatedPro
 
 async Task UpdateProductInDatabaseAsync(int productId, Product updatedProduct)
 {
-    await Task.Delay(100);
+    await Task.Delay(2000);
     var oldProduct = products.Single(p => p.Id == productId);
 
     products.Remove(oldProduct);
     products.Add(updatedProduct);
+    products = products.OrderBy(p => p.Id).ToList();
+
 }
 
 app.MapDefaultEndpoints();
