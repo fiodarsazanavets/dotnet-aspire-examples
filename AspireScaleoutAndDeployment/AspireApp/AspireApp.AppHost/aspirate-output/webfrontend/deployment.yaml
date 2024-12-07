@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webfrontend
+  labels:
+    app: webfrontend
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webfrontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: webfrontend
+    spec:
+      containers:
+      - name: webfrontend
+        image: webfrontend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        envFrom:
+        - configMapRef:
+            name: webfrontend-env
+        - secretRef:
+            name: webfrontend-secrets
+      terminationGracePeriodSeconds: 180

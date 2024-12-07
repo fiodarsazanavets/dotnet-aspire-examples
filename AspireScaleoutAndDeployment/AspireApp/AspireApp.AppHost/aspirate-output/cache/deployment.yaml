@@ -1,0 +1,31 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache
+  labels:
+    app: cache
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cache
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: cache
+    spec:
+      containers:
+      - name: cache
+        image: docker.io/library/redis:7.4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: tcp
+          containerPort: 6379
+        envFrom:
+        - configMapRef:
+            name: cache-env
+      terminationGracePeriodSeconds: 180
