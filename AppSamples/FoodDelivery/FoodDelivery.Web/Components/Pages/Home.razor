@@ -1,8 +1,9 @@
 ﻿@page "/"
+
 @using FoodDelivery.Web.Extensions
 @using Microsoft.AspNetCore.SignalR.Client
 
-@inject IJSRuntime JS
+@inject IJSRuntime JSRuntime
 @inject IHttpMessageHandlerFactory ClientFactory
 
 <div id="map" style="width: 100%; height: 400px;"></div>
@@ -15,18 +16,24 @@
         hubConnection = new HubConnectionBuilder()
             .WithUrl("https://apiservice/locationHub", ClientFactory)
             .Build();
-
-        hubConnection.On<double, double>("ReceiveLocationUpdate", async (lat, lon) =>
-        {
-            StateHasChanged();
-            await UpdateMap(lat, lon);
-        });
-
-        await hubConnection.StartAsync();
     }
 
-    private async Task UpdateMap(double latitude, double longitude)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JS.InvokeVoidAsync("addMarker", latitude, longitude);
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeMap");
+
+            hubConnection?.On<double, double>("ReceiveLocationUpdate", async (lat, lon) =>
+            {
+                await InvokeAsync(async () =>
+                {
+                    await JSRuntime.InvokeVoidAsync("addMarker", lat, lon);
+                    StateHasChanged();
+                });
+            });
+
+            await hubConnection?.StartAsync();
+        }
     }
 }

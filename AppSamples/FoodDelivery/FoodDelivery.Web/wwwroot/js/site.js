@@ -1,15 +1,19 @@
-﻿var map = new ol.Map({
-    target: 'map',
-    layers: [
-        new ol.layer.Tile({
-            source: new ol.source.OSM()
+﻿var map = null;
+
+window.initializeMap = () => {
+    map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([-0.1276, 51.5074]),
+            zoom: 12
         })
-    ],
-    view: new ol.View({
-        center: ol.proj.fromLonLat([-0.1276, 51.5074]),
-        zoom: 12
-    })
-});
+    });
+}
 
 // Global variable to store the marker layer
 window.markerLayer = null;
