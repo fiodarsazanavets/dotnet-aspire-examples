@@ -4,8 +4,8 @@ namespace FoodDelivery.ApiService;
 
 public class LocationHub : Hub
 {
-    public async Task UpdateLocation(int orderId, double latitude, double longitude)
+    public async Task UpdateLocation(double latitude, double longitude)
     {
-        await Clients.All.SendAsync("ReceiveLocationUpdate", orderId, latitude, longitude);
+        await Clients.All.SendAsync("ReceiveLocationUpdate", latitude, longitude);
     }
 }
