@@ -1,0 +1,50 @@
+﻿@page "/"
+
+@using OnlineStore.ServiceDefaults.Models
+@inject ProductsApiClient HttpClient
+
+<h3>Product Catalog</h3>
+
+@if (products == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price ($)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price</td>
+                    <td><button @onclick="async () => await AddToCart(product.Id)">Add to Cart</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private Product[] products = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await HttpClient.GetProductsAsync();
+    }
+
+    private async Task AddToCart(int productId)
+    {
+        await HttpClient.AddToCartAsync(productId);
+    }
+}

@@ -1,0 +1,70 @@
+﻿@page "/cart"
+
+@using OnlineStore.ServiceDefaults.Models
+@inject ProductsApiClient HttpClient
+
+<h3>Cart</h3>
+
+@if (cartItems == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price ($)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cartItem in cartItems)
+            {
+                <tr>
+                    <td>@products.First(p => p.Id == cartItem.ProductId).Name</td>
+                    <td>@cartItem.Quantity</td>
+                    <td>@(products.First(p => p.Id == cartItem.ProductId).Price * cartItem.Quantity)</td>
+                    <td><button @onclick="() => RemoveFromCart(cartItem.ProductId)">Remove</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p><b>Cart Total:</b> $@(cartItems.Sum(i => i.Quantity) * products.Where(p => cartItems.Select(c => c.ProductId).Contains(p.Id)).Sum(p => p.Price))</p>
+}
+
+@code {
+    private CartItem[] cartItems = [];
+    private List<Product> products = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadCart();
+    }
+
+    private async Task ReloadCart()
+    {
+        cartItems = await HttpClient.GetCartItemsAsync();
+        products = [];
+
+        foreach (var cartItem in cartItems)
+        {
+            var product = await HttpClient.GetProductAsync(cartItem.ProductId);
+
+            if (product is not null)
+            {
+                products.Add(product);
+            }
+        }
+    }
+
+    private async Task RemoveFromCart(int productId)
+    {
+        await HttpClient.DeleteItemFromCartAsync(productId);
+        await ReloadCart();
+        StateHasChanged();
+    }
+}
