@@ -108,7 +108,7 @@ async static Task UpdateCache(List<CartItem> cachedItems, IDistributedCache cach
         JsonSerializer.Serialize(cachedItems),
         new DistributedCacheEntryOptions
         {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
         });
 }
 
