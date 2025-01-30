@@ -1,10 +1,10 @@
-var builder = DistributedApplication.CreateBuilder(args);
+IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
-var password = builder.AddParameter("password", secret: true);
-var sql = builder.AddSqlServer("sql", password);
-var sqldb = sql.AddDatabase("sqldb");
+IResourceBuilder<ParameterResource> password = builder.AddParameter("sql-password", secret: true);
+IResourceBuilder<SqlServerServerResource> sql = builder.AddSqlServer("sql", password);
+IResourceBuilder<SqlServerDatabaseResource> sqldb = sql.AddDatabase("sqldb");
 
-var apiService = builder
+IResourceBuilder<ProjectResource> apiService = builder
     .AddProject<Projects.AspireApp_ApiService>("apiservice")
     .WithReference(sqldb);
 
