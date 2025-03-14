@@ -49,18 +49,18 @@ builder.Services.AddOpenIddict()
     {
         serverBuilder.DisableAccessTokenEncryption();
         serverBuilder.SetAuthorizationEndpointUris("connect/authorize")
-            .SetLogoutEndpointUris("connect/logout")
+            .SetEndSessionEndpointUris("connect/logout")
             .SetTokenEndpointUris("connect/token")
-            .SetUserinfoEndpointUris("connect/userinfo");
+            .SetUserInfoEndpointUris("connect/userinfo");
         serverBuilder.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
         serverBuilder.AllowAuthorizationCodeFlow();
         serverBuilder.AddDevelopmentEncryptionCertificate()
             .AddDevelopmentSigningCertificate();
         serverBuilder.UseAspNetCore()
             .EnableAuthorizationEndpointPassthrough()
-            .EnableLogoutEndpointPassthrough()
+            .EnableEndSessionEndpointPassthrough()
             .EnableTokenEndpointPassthrough()
-            .EnableUserinfoEndpointPassthrough()
+            .EnableUserInfoEndpointPassthrough()
             .EnableStatusCodePagesIntegration()
             .DisableTransportSecurityRequirement();
     })

@@ -38,11 +38,11 @@ public class AuthorizationController(
             throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
         var result = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
-        if (result == null || !result.Succeeded || request.HasPrompt(Prompts.Login) ||
+        if (result == null || !result.Succeeded || request.HasPromptValue(PromptValues.Login) ||
            (request.MaxAge != null && result.Properties?.IssuedUtc != null &&
             DateTimeOffset.UtcNow - result.Properties.IssuedUtc > TimeSpan.FromSeconds(request.MaxAge.Value)))
         {
-            if (request.HasPrompt(Prompts.None))
+            if (request.HasPromptValue(PromptValues.None))
             {
                 return Forbid(
                     authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
@@ -53,7 +53,7 @@ public class AuthorizationController(
                     }));
             }
 
-            var prompt = string.Join(" ", request.GetPrompts().Remove(Prompts.Login));
+            var prompt = string.Join(" ", request.GetPromptValues().Remove(PromptValues.Login));
 
             var parameters = Request.HasFormContentType ?
                 Request.Form.Where(parameter => parameter.Key != Parameters.Prompt).ToList() :
@@ -96,7 +96,7 @@ public class AuthorizationController(
 
             case ConsentTypes.Implicit:
             case ConsentTypes.External when authorizations.Count != 0:
-            case ConsentTypes.Explicit when authorizations.Count != 0 && !request!.HasPrompt(Prompts.Consent):
+            case ConsentTypes.Explicit when authorizations.Count != 0 && !request!.HasPromptValue(PromptValues.Consent):
                 var identity = new ClaimsIdentity(
                     authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                     nameType: Claims.Name,
@@ -123,8 +123,8 @@ public class AuthorizationController(
 
                 return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
-            case ConsentTypes.Explicit when request!.HasPrompt(Prompts.None):
-            case ConsentTypes.Systematic when request!.HasPrompt(Prompts.None):
+            case ConsentTypes.Explicit when request!.HasPromptValue(PromptValues.None):
+            case ConsentTypes.Systematic when request!.HasPromptValue(PromptValues.None):
                 return Forbid(
                     authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
                     properties: new AuthenticationProperties(new Dictionary<string, string?>
