@@ -1,4 +1,3 @@
-using AspireApp.ServiceDefaults;
 using AspireApp.Web;
 using AspireApp.Web.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -32,8 +31,8 @@ builder.Services.AddAuthentication(options =>
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    options.SignInScheme = "Cookies";
-    options.Authority = Environment.GetEnvironmentVariable(Constants.IDP_HTTP_ENVIRONMENT_VARIABLE);
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.Authority = Environment.GetEnvironmentVariable("IDP_HTTP");
     options.ClientId = "aspNetCoreAuth";
     options.ClientSecret = "some_secret";
     options.ResponseType = "code";

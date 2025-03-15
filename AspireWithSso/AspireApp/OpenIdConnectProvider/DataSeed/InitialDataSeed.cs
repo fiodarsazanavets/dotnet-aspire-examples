@@ -1,5 +1,4 @@
-﻿using AspireApp.ServiceDefaults;
-using OpenIdConnectProvider.Data;
+﻿using OpenIdConnectProvider.Data;
 using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -26,11 +25,11 @@ public class InitialDataSeed(IServiceProvider serviceProvider) : IHostedService
                 DisplayName = "Blazor WebAssembly client application",
                 RedirectUris =
                 {
-                    new Uri(Environment.GetEnvironmentVariable(Constants.WEBAPP_HTTP_ENVIRONMENT_VARIABLE) + "/signin-oidc")
+                    new Uri(Environment.GetEnvironmentVariable("WEBAPP_HTTP") + "/signin-oidc")
                 },
                 PostLogoutRedirectUris =
                 {
-                    new Uri(Environment.GetEnvironmentVariable(Constants.WEBAPP_HTTP_ENVIRONMENT_VARIABLE) + "/signout-callback-oidc")
+                    new Uri(Environment.GetEnvironmentVariable("WEBAPP_HTTP") + "/signout-callback-oidc")
                 },
                 Permissions =
                 {
