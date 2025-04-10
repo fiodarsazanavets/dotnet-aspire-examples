@@ -1,10 +1,14 @@
 using AspireApp.AppHost.Extensions;
+using AspireApp.MailDev.Hosting;
 using Microsoft.Extensions.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+var maildev = builder.AddMailDev("maildev");
+
 var idp = builder.AddKeycloakContainer("idp", tag: "23.0")
     .ImportRealms("Keycloak")
+    .WithReference(maildev)
     .WithExternalHttpEndpoints();
 
 var apiService = builder.AddProject<Projects.AspireApp_ApiService>("apiservice")
