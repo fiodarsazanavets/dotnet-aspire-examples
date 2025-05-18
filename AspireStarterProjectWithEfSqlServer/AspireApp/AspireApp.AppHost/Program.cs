@@ -1,7 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var password = builder.AddParameter("password", secret: true);
-var sql = builder.AddSqlServer("sql", password);
+var sql = builder.AddSqlServer("sql", password).WithLifetime(ContainerLifetime.Persistent);
 var sqldb = sql.AddDatabase("sqldb");
 
 var apiService = builder
