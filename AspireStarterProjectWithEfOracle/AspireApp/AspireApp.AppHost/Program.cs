@@ -1,11 +1,11 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var password = builder.AddParameter("password", secret: true);
-var oracle = builder.AddOracle("oracle", password);
+var oracle = builder.AddOracle("oracle").WithLifetime(ContainerLifetime.Persistent);
 var oracledb = oracle.AddDatabase("oracledb");
 
 var apiService = builder
     .AddProject<Projects.AspireApp_ApiService>("apiservice")
+    .WaitFor(oracledb)
     .WithReference(oracledb);
 
 

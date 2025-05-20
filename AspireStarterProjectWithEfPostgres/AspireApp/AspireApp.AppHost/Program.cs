@@ -5,6 +5,7 @@ var postgresdb = postgres.AddDatabase("postgresdb");
 
 var apiService = builder
     .AddProject<Projects.AspireApp_ApiService>("apiservice")
+    .WaitFor(postgresdb)
     .WithReference(postgresdb);
 
 

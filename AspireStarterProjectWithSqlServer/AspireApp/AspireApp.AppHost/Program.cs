@@ -6,6 +6,7 @@ var sqldb = sql.AddDatabase("sqldb", "master");
 
 var apiService = builder
     .AddProject<Projects.AspireApp_ApiService>("apiservice")
+    .WaitFor(sqldb)
     .WithReference(sqldb);
 
 
