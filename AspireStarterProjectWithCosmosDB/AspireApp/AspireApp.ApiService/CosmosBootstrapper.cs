@@ -40,7 +40,7 @@ public class CosmosBootstrapper(CosmosClient cosmosClient, ILogger<CosmosBootstr
                         args.AttemptNumber,
                         args.RetryDelay,
                         args.Outcome.Exception?.Message ?? "[none]",
-                        args.Outcome.Exception?.InnerException?.Message ?? "");
+                        args.Outcome.Exception?.InnerException?.Message ?? string.Empty);
                     return ValueTask.CompletedTask;
                 }
             })
