@@ -10,14 +10,19 @@ public class CosmosBootstrapper(CosmosClient cosmosClient, ILogger<CosmosBootstr
     private bool _dbCreated;
     private bool _dbCreationFailed;
 
-    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    public Task<HealthCheckResult> CheckHealthAsync(
+        HealthCheckContext context,
+        CancellationToken cancellationToken = default)
     {
-        var status = _dbCreated
-            ? HealthCheckResult.Healthy()
-            : _dbCreationFailed
-                ? HealthCheckResult.Unhealthy("Database creation failed.")
-                : HealthCheckResult.Degraded("Database creation is still in progress.");
-        return Task.FromResult(status);
+        if (_dbCreated)
+            return Task.FromResult(HealthCheckResult.Healthy());
+
+        if (_dbCreationFailed)
+            return Task.FromResult(
+                HealthCheckResult.Unhealthy("Database creation failed."));
+
+        return Task.FromResult(
+            HealthCheckResult.Degraded("Database creation is still in progress."));
     }
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
