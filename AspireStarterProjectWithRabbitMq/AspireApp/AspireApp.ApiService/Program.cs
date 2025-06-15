@@ -30,7 +30,7 @@ using (var scope = app.Services.CreateScope())
                          autoDelete: false,
                          arguments: null);
 
-    for (int i = 1; i < 6; i++)
+    foreach (int i in Enumerable.Range(1, 5))
     {
         var message = new WeatherForecast
         (
