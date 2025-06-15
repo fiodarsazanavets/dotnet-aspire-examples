@@ -26,9 +26,9 @@ public class WeatherApiClient(IConnection connection) : BackgroundService
         var consumer = new EventingBasicConsumer(channel);
 
         // Set up a callback to handle received messages
-        consumer.Received += (model, ea) =>
+        consumer.Received += (model, eventArg) =>
         {
-            var body = ea.Body.ToArray();
+            var body = eventArg.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             Console.WriteLine($" [x] Received {message}");
 
