@@ -8,8 +8,6 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-await Task.Delay(10000);
-
 builder.AddRabbitMQClient("rabbitmq");
 
 builder.Services.AddSingleton<WeatherApiClient>();

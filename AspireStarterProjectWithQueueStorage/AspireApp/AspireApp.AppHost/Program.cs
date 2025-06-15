@@ -4,11 +4,13 @@ var queues = builder.AddAzureStorage("storage")
                     .RunAsEmulator()
                     .AddQueues("queues");
 
-var apiService = builder.AddProject<Projects.AspireApp_ApiService>("apiservice")
+builder.AddProject<Projects.AspireApp_ApiService>("apiservice")
+    .WaitFor(queues)
     .WithReference(queues);
 
 builder.AddProject<Projects.AspireApp_Web>("webfrontend")
     .WithExternalHttpEndpoints()
+    .WaitFor(queues)
     .WithReference(queues);
 
 builder.Build().Run();
