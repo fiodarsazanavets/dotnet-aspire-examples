@@ -1,7 +1,41 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
 
-<PageTitle>Home</PageTitle>
+<div class="container py-4">
+    <span id="status" class="badge text-bg-secondary">disconnected</span>
 
-<h1>Hello, world!</h1>
+    <form id="promptForm" class="mt-3">
+        <textarea id="prompt" class="form-control" rows="4" placeholder="Ask…"></textarea>
+        <div class="mt-2 d-flex gap-2">
+            <button id="sendBtn" type="submit" class="btn btn-primary">Send</button>
+            <button id="stopBtn" type="button" class="btn btn-outline-secondary" disabled>Stop</button>
+            <button id="clearBtn" type="button" class="btn btn-outline-danger ms-auto">Clear</button>
+            <button id="copyBtn" type="button" class="btn btn-outline-secondary">Copy</button>
+        </div>
+    </form>
 
-Welcome to your new app.
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>Response</strong>
+            <span id="tokenCount" class="small text-muted">0 chars</span>
+        </div>
+        <div class="card-body">
+            <div id="output" style="white-space:pre-wrap; min-height:8rem;"></div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IJSObjectReference? _module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Load your module after the component has rendered
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/chat.js");
+            await _module.InvokeVoidAsync("init"); // calls your init() to wire up events
+        }
+    }
+}

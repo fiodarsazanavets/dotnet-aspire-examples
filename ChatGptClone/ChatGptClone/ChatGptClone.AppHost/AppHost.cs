@@ -1,9 +1,11 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var ollama = builder.AddOllama("ollama")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataVolume()
     .WithOpenWebUI();
 
-var phi35 = ollama.AddModel("phi3-5");
+var phi35 = ollama.AddModel("phi3.5");
 
 builder.AddProject<Projects.ChatGptClone_Web>("webfrontend")
     .WithExternalHttpEndpoints()
