@@ -5,7 +5,7 @@ var ollama = builder.AddOllama("ollama")
     .WithDataVolume()
     .WithOpenWebUI();
 
-var phi35 = ollama.AddModel("phi3.5");
+var phi35 = ollama.AddModel("phi35", "phi3.5");
 
 builder.AddProject<Projects.ChatGptClone_Web>("webfrontend")
     .WithExternalHttpEndpoints()

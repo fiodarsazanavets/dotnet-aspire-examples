@@ -2,6 +2,7 @@ using ChatGptClone.Web;
 using ChatGptClone.Web.Components;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using System.Data.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,22 +18,23 @@ builder.Services.AddOutputCache();
 
 builder.Services.AddSingleton<IChatHistoryService, ChatHistoryService>();
 
-builder.Services.AddHttpClient("ollama-phi35", c =>
+var phiConnectionString = builder.Configuration.GetConnectionString("phi35");
+var csBuilder = new DbConnectionStringBuilder { ConnectionString = phiConnectionString };
+
+if (!csBuilder.TryGetValue("Endpoint", out var ollamaEndpoint))
 {
-    c.BaseAddress = new Uri("https+http://phi3-5");
-})
-.AddServiceDiscovery()
-.AddStandardResilienceHandler();
+    throw new InvalidDataException("Ollama connection string is not properly configured.");
+}
 
 builder.Services.AddSingleton(sp =>
 {
-    var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ollama-phi35");
+    var http = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ollama");
 
     IKernelBuilder kb = Kernel.CreateBuilder();
 #pragma warning disable SKEXP0070
     kb.AddOllamaChatCompletion(
         modelId: "phi3.5",
-        httpClient: http
+        endpoint: new Uri((string)ollamaEndpoint)
     );
 #pragma warning restore SKEXP0070
 
