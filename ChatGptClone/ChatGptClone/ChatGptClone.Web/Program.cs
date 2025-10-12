@@ -58,7 +58,7 @@ app.UseOutputCache();
 
 app.MapStaticAssets();
 
-app.MapHub<ChatHub>("/chat").DisableAntiforgery();
+app.MapHub<ChatHub>("/chat");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
